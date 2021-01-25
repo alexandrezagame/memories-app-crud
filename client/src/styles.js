@@ -8,12 +8,14 @@ export default makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    alignContent: 'center',
   },
   heading: {
-    color: 'rgba(0,183,255, 1)',
+    fontFamily: 'Knewave',
+    color: '#2727e6',
   },
   image: {
-    marginLeft: '15px',
+    // height: '5rem',
   },
   [theme.breakpoints.down('sm')]: {
     mainContainer: {

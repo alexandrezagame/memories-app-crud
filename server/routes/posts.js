@@ -9,7 +9,13 @@ import {
   deletePost,
 } from '../controllers/posts.js';
 
+import cors from 'cors';
 const router = express.Router();
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+};
+router.use(cors(corsOptions));
 
 router.get('/', getPosts);
 router.post('/', createPost);
