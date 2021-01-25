@@ -13,7 +13,7 @@ app.use(bodyParser.json({ limit: '50mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 // app.use(cors());
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:3000/',
 };
 app.use(cors(corsOptions));
 app.use('/posts', postRoutes);
