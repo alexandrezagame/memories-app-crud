@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import useStyles from './styles';
-import Input from './Input';
 import { useDispatch } from 'react-redux';
 import {
   Avatar,
@@ -10,11 +8,15 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+
 import Icon from './icon';
-import { useHistory } from 'react-router-dom';
 import { signin, signup } from '../../actions/auth';
+import { AUTH } from '../../constants/actionTypes';
+import useStyles from './styles';
+import Input from './Input';
 
 const initialState = {
   firstName: '',
@@ -24,28 +26,30 @@ const initialState = {
   confirmPassword: '',
 };
 
-const Auth = () => {
-  const classes = useStyles();
-  const [showPassword, setShowPassword] = useState(false);
+const SignUp = () => {
+  const [form, setForm] = useState(initialState);
   const [isSignup, setIsSignup] = useState(false);
-  const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const history = useHistory();
+  const classes = useStyles();
 
-  const handleShowPassword = () =>
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const [showPassword, setShowPassword] = useState(false);
+  const handleShowPassword = () => setShowPassword(!showPassword);
+
+  const switchMode = () => {
+    setForm(initialState);
+    setIsSignup((prevIsSignup) => !prevIsSignup);
+    setShowPassword(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isSignup) {
-      dispatch(signup(formData, history));
-    } else {
-      dispatch(signin(formData, history));
-    }
-  };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (isSignup) {
+      dispatch(signup(form, history));
+    } else {
+      dispatch(signin(form, history));
+    }
   };
 
   const googleSuccess = async (res) => {
@@ -53,22 +57,19 @@ const Auth = () => {
     const token = res?.tokenId;
 
     try {
-      dispatch({ type: 'AUTH', data: { result, token } });
+      dispatch({ type: AUTH, data: { result, token } });
+
       history.push('/');
     } catch (error) {
       console.log(error);
     }
   };
 
-  const googleFailure = (error) => {
-    console.log(error);
-    console.log('Google Sign In was unsuccessful. Try again later.');
-  };
+  const googleError = () =>
+    alert('Google Sign In was unsuccessful. Try again later');
 
-  const switchMode = () => {
-    setIsSignup((prevIsSignup) => !prevIsSignup);
-    setShowPassword(false);
-  };
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   return (
     <Container component="main" maxWidth="xs">
@@ -100,7 +101,7 @@ const Auth = () => {
             )}
             <Input
               name="email"
-              label="Email address"
+              label="Email Address"
               handleChange={handleChange}
               type="email"
             />
@@ -127,10 +128,10 @@ const Auth = () => {
             color="primary"
             className={classes.submit}
           >
-            {isSignup ? 'Sign up' : 'Sign in'}
+            {isSignup ? 'Sign Up' : 'Sign In'}
           </Button>
           <GoogleLogin
-            clientId="194346644312-hnr7rn0emjk0ja8b0bh3h1nnkl34blse.apps.googleusercontent.com"
+            clientId="564033717568-e5p23rhvcs4i6kffgsbci1d64r8hp6fn.apps.googleusercontent.com"
             render={(renderProps) => (
               <Button
                 className={classes.googleButton}
@@ -141,11 +142,11 @@ const Auth = () => {
                 startIcon={<Icon />}
                 variant="contained"
               >
-                Google Sign in
+                Google Sign In
               </Button>
             )}
             onSuccess={googleSuccess}
-            onFailure={googleFailure}
+            onFailure={googleError}
             cookiePolicy="single_host_origin"
           />
           <Grid container justify="flex-end">
@@ -153,7 +154,7 @@ const Auth = () => {
               <Button onClick={switchMode}>
                 {isSignup
                   ? 'Already have an account? Sign in'
-                  : "Don't have an account? Sign up"}
+                  : "Don't have an account? Sign Up"}
               </Button>
             </Grid>
           </Grid>
@@ -163,4 +164,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default SignUp;
