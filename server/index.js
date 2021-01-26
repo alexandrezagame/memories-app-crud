@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 
 import postRoutes from './routes/posts.js';
+import userRoutes from './routes/users.js';
 
 const app = express();
 dotenv.config();
@@ -13,11 +14,11 @@ app.use(bodyParser.json({ limit: '50mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 const corsOptions = {
-  // origin: 'https://memories-az.netlify.app',
-  origin: 'http://localhost:3000',
+  origin: 'https://memories-az.netlify.app',
 };
 app.use(cors(corsOptions));
 app.use('/posts', postRoutes);
+app.use('/user', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello to memories API');
