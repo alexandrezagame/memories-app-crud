@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useStyles from './styles';
 import Input from './Input';
+import { useDispatch } from 'react-redux';
 import {
   Avatar,
   Button,
@@ -9,12 +10,17 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
+import { GoogleLogin } from 'react-google-login';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Icon from './icon';
+import { useHistory } from 'react-router-dom';
 
 const Auth = () => {
   const classes = useStyles();
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleShowPassword = () =>
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -22,6 +28,23 @@ const Auth = () => {
   const handleSubmit = () => {};
 
   const handleChange = () => {};
+
+  const googleSuccess = async (res) => {
+    const result = res?.profileObj;
+    const token = res?.tokenId;
+
+    try {
+      dispatch({ type: 'AUTH', data: { result, token } });
+      history.push('/');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const googleFailure = (error) => {
+    console.log(error);
+    console.log('Google Sign In was unsuccessful. Try again later.');
+  };
 
   const switchMode = () => {
     setIsSignup((prevIsSignup) => !prevIsSignup);
@@ -87,6 +110,25 @@ const Auth = () => {
           >
             {isSignup ? 'Sign up' : 'Sign in'}
           </Button>
+          <GoogleLogin
+            clientId="194346644312-hnr7rn0emjk0ja8b0bh3h1nnkl34blse.apps.googleusercontent.com"
+            render={(renderProps) => (
+              <Button
+                className={classes.googleButton}
+                color="primary"
+                fullWidth
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+                startIcon={<Icon />}
+                variant="contained"
+              >
+                Google Sign in
+              </Button>
+            )}
+            onSuccess={googleSuccess}
+            onFailure={googleFailure}
+            cookiePolicy="single_host_origin"
+          />
           <Grid container justify="flex-end">
             <Grid item>
               <Button onClick={switchMode}>
